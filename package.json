@@ -1,6 +1,6 @@
 {
   "name": "kbb-local-hooks",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Kbb Local Git Hooks",
   "main": "commit-msg.js",
   "scripts": {
