@@ -1,1 +1,3 @@
-console.log('Hello world');
+exports.printMsg = function() {
+	console.log('Hello world');	
+}

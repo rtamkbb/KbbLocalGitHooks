@@ -1,0 +1,15 @@
+{
+  "name": "kbb-local-hooks",
+  "version": "0.0.1",
+  "description": "Kbb Local Git Hooks",
+  "main": "commit-msg.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "readme": "ERROR: No README data found!",
+  "_id": "kbb-local-hooks@0.0.1",
+  "_shasum": "1e360eb036399559f4f60b35519d5b40ba5df7d1",
+  "_from": "kbb-local-hooks@latest"
+}
