@@ -1,5 +1,20 @@
 #!/usr/bin/env node
 
-var CommitMessage = require('kbb-local-hooks');
+var fs = require('fs'); // need file reading capability
+var CommitMessage = require('../../KBB.Trident.Web/node_modules/kbb-local-hooks/commit-msg.js');
 
-CommitMessage.printMsg();
+var file = process.argv[2]; // commit message is stored in a file, usually ".git/COMMIT_EDITMSG"
+if(!file) {
+	console.log('Could not read commit message file');
+}
+else {
+	var msg = fs.readFileSync(file, { encoding: 'utf8' }); // read the file for the commit message
+	if(!msg) {
+		console.log('Could not read commit message file');
+	}
+	else {
+		CommitMessage.validate(msg);
+	}
+}
+
+process.exit(1);
