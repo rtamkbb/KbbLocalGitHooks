@@ -1,20 +1,25 @@
 #!/usr/bin/env node
 
 var childProcess = require('child_process');
+var PreCommit = require('../../KBB.Trident.Web/node_modules/kbb-local-hooks/pre-commit.js');
+var filesStaged, branchName, conflictMarkers;
 
 console.log('PRE COMMIT HOOK');
+
+// Get the staged files
 var spawn = childProcess.spawnSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM']);
-	var errorText = spawn.stderr.toString().trim();
+var errorText = spawn.stderr.toString().trim();
+if (errorText) {
+	console.log('ERROR: Failed to get list of files');
+}
+else {
+	filesStaged = spawn.stdout.toString().trim();
+}
 
-	if (errorText) {
-	  console.log('ERROR: Failed to get list of files');
-	  throw new Error(errorText);
-	}
-	else {
-	  console.log(spawn.stdout.toString().trim());
-	}
+// Get the current branch name
+// git rev-parse --abbrev-ref HEAD
 
-console.log('END COMMIT HOOK');
-//console.log(files);
+// Get the conflict markers
+// git diff-index --check --cached HEAD --
 
-process.exit(1);
+process.exit(PreCommit.validate(filesStaged));
