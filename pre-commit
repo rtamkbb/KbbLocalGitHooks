@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+var childProcess = require('child_process');
+
+console.log('PRE COMMIT HOOK');
+var spawn = childProcess.spawnSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM']);
+	var errorText = spawn.stderr.toString().trim();
+
+	if (errorText) {
+	  console.log('ERROR: Failed to get list of files');
+	  throw new Error(errorText);
+	}
+	else {
+	  console.log(spawn.stdout.toString().trim());
+	}
+
+console.log('END COMMIT HOOK');
+//console.log(files);
+
+process.exit(1);
