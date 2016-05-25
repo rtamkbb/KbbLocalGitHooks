@@ -53,4 +53,5 @@ var scssLintFiles = PreCommit.getLinterCommandArguments(filesStaged, 'scss');
 console.log('RUN SCSS LINT ON');
 console.log(scssLintFiles);
 
-process.exit(PreCommit.validate(branchName, conflictMarkers));
+var statusCode = PreCommit.validate(branchName, conflictMarkers)
+process.exit(statusCode);
