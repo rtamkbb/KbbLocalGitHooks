@@ -5,7 +5,9 @@ var CommitMessage = require('../../KBB.Trident.Web/node_modules/kbb-local-hooks/
 
 console.log('COMMIT MSG HOOK');
 
-var file = process.argv[2]; // commit message is stored in a file, usually ".git/COMMIT_EDITMSG"
+var file = process.argv[2]; // commit message is stored in a file, usually ".git/COMMIT_EDITMSG";
+var statusCode = 1;
+
 if(!file) {
 	console.log('Could not read commit message file');
 }
@@ -15,8 +17,8 @@ else {
 		console.log('Could not read commit message file');
 	}
 	else {
-		process.exit(CommitMessage.validate(msg));
+		statusCode = CommitMessage.validate(msg);
 	}
 }
 
-process.exit(1);
+process.exit(statusCode);
