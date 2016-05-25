@@ -7,6 +7,7 @@ var filesStaged, branchName, conflictMarkers;
 console.log('PRE COMMIT HOOK');
 
 // Get the staged files
+// git diff --cached --name-only --diff-filter=ACM
 var spawn = childProcess.spawnSync('git', ['diff', '--cached', '--name-only', '--diff-filter=ACM']);
 var errorText = spawn.stderr.toString().trim();
 if (errorText) {
@@ -18,8 +19,38 @@ else {
 
 // Get the current branch name
 // git rev-parse --abbrev-ref HEAD
+var spawn2 = childProcess.spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
+var errorText2 = spawn.stderr.toString().trim();
+if (errorText2) {
+	console.log('ERROR: Failed to get branch name');
+}
+else {
+	branchName = spawn2.stdout.toString().trim();
+}
 
 // Get the conflict markers
 // git diff-index --check --cached HEAD --
+var spawn3 = childProcess.spawnSync('git', ['diff-index', '--check', '--cached', 'HEAD', '--']);
+var errorText3 = spawn.stderr.toString().trim();
+if (errorText3) {
+	console.log('ERROR: Failed to get branch name');
+}
+else {
+	conflictMarkers = spawn3.stdout.toString().trim();
+}
 
-process.exit(PreCommit.validate(filesStaged));
+// -------------------------------------------------------------------------- //
+
+// get and run ES lint command arguments (eslint)
+var esLintCommand = 'eslint';
+var esLintFiles = PreCommit.getLinterCommandArguments(filesStaged, 'js');
+console.log('RUN ES LINT ON');
+console.log(esLintFiles);
+
+// get and run SCSS lint command (scss-lint)
+var scssLintCommand = 'scss-lint';
+var scssLintFiles = PreCommit.getLinterCommandArguments(filesStaged, 'scss');
+console.log('RUN SCSS LINT ON');
+console.log(scssLintFiles);
+
+process.exit(PreCommit.validate(branchName, conflictMarkers));
