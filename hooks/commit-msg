@@ -1,23 +1,36 @@
 #!/usr/bin/env node
 
+var childProcess = require('child_process'); // run git commands
 var fs = require('fs'); // need file reading capability
 var CommitMessage = require('../../KBB.Trident.Web/node_modules/kbb-local-hooks/commit-msg.js');
 
-console.log('COMMIT MSG HOOK');
-
 var file = process.argv[2]; // commit message is stored in a file, usually ".git/COMMIT_EDITMSG";
-var statusCode = 1;
 
-if(!file) {
-	console.log('Could not read commit message file');
+var statusCode = 1;
+var branchName = '';
+var commitMsg = '';
+
+// Get the current branch name
+// git rev-parse --abbrev-ref HEAD
+var spawn = childProcess.spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
+var errorText = spawn.stderr.toString().trim();
+if (errorText) {
+	console.log('ERROR: Failed to get branch name');
 }
 else {
-	var msg = fs.readFileSync(file, { encoding: 'utf8' }); // read the file for the commit message
-	if(!msg) {
-		console.log('Could not read commit message file');
+	branchName = spawn.stdout.toString().trim();
+}
+
+if(!file) {
+	console.log('ERROR: No commit message file found');
+}
+else {
+	commitMsg = fs.readFileSync(file, { encoding: 'utf8' }); // read the file for the commit message
+	if(!commitMsg) {
+		console.log('ERROR: Could not read commit message file');
 	}
 	else {
-		statusCode = CommitMessage.validate(msg);
+		statusCode = CommitMessage.validate(commitMsg, branchName);
 	}
 }
 
