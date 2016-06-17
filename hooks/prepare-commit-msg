@@ -8,67 +8,42 @@ console.log('PREPARE COMMIT MSG HOOK');
 
 var mergeFile = process.argv[2]; // merge commit message is stored in a file, usually ".git/MERGE_MSG"
 var source = process.argv[3]; // commit message source (message, template, merge, squash, commit)
+var statusCode = 1;
+var mergeFromBranchName = '';
+var currentBranchName = '';
 
-var mergeCommitMessage;
+// if merge, then get the current branch name and the merge from branch name
 if(source === 'merge'){
+	// get the merge from branch name
 	try {
 		var stats = fs.statSync(mergeFile);
-		var merge = fs.readFileSync(mergeFile, { encoding: 'utf8' }); // read the file for the merge info
+		var mergeFrom = fs.readFileSync(mergeFile, { encoding: 'utf8' }); // read the file for the merge info
 
 		// parse out the merge from branch name
 		// merge from branch name is stored in the merge file in this convention "Merge branch '[branchName]'"
-		var mergeFromBranchName = merge.substring(merge.indexOf('\'') + 1, merge.lastIndexOf('\''));
-		console.log(mergeFromBranchName);
-
-		// branch name will be in this convention "story-XXXXX-description" or "bug-XXXXX-description"
-		// get the first part of the branch name to determine type of commit (story or bug)
-		var commitType = mergeFromBranchName.substring(0, mergeFromBranchName.indexOf('-'));
-		mergeFromBranchName = mergeFromBranchName.substring(mergeFromBranchName.indexOf('-') + 1);
-
-		// get the id of the story or bug, this is in the second part of the branch name
-		var id = mergeFromBranchName.substring(0, mergeFromBranchName.indexOf('-'));
-		mergeFromBranchName = mergeFromBranchName.substring(mergeFromBranchName.indexOf('-') + 1);
-
-		// with all the parts cut out from the branch name, the remaining that is left is the branch description
-		var branchDescription = mergeFromBranchName;
-
-		// update the merge message with an invalid template, so the user has to go and fill in the correct message
-		mergeCommitMessage = 'x';
-		if(commitType === 'story') {
-			mergeCommitMessage += 'Story: B-';
-		}
-		else {
-			mergeCommitMessage += 'BugId: ';
-		}
-		mergeCommitMessage += id + ' | [WhatDidYouMerge?]'
-
-		console.log(mergeCommitMessage);
-		console.log(mergeFile);
-
-		try {
-			fs.unlinkSync(mergeFile);
-			fs.unlinkSync(mergeFile + '1');
-		}
-		catch (e) {
-			console.log('could not delete file');
-		}
-
-		
-		try {
-			//fs.writeFileSync(mergeFile, mergeCommitMessage);
-			//fs.writeFileSync(mergeFile + '1', mergeCommitMessage);
-		}
-		catch (e) {
-			console.log('could not update file');
-		}
-		
+		mergeFromBranchName = merge.substring(merge.indexOf('\'') + 1, merge.lastIndexOf('\''));
+		console.log('mergeFromBranchName: ' + mergeFromBranchName);	
 	}
 	catch (e) {
-		console.log('merge file not found, no merge in progress');
+		console.log('ERROR: merge file not found');
+	}
+	
+	// get the current branch name
+	var spawn = childProcess.spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
+	var errorText = spawn.stderr.toString().trim();
+	if (errorText) {
+		console.log('ERROR: Failed to get branch name');
+	}
+	else {
+		currentBranchName = spawn.stdout.toString().trim();
+		console.log('currentBranchName: ' + currentBranchName;
+	}
+	
+	if(mergeFromBranchName !== '' && currentBranchName !== '') {
+		statusCode = PrepareCommitMessage.validate(currentBranchName, mergeFromBranchName);
 	}
 }
-
 console.log('source: ' + source);
 
 
-process.exit(1);
+process.exit(statusCode);

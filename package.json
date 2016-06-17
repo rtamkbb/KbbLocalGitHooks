@@ -1,8 +1,7 @@
 {
   "name": "kbb-local-hooks",
-  "version": "0.0.11",
+  "version": "0.0.13",
   "description": "Kbb Local Git Hooks",
-  "main": "commit-msg.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
