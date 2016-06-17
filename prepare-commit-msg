@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+var fs = require('fs'); // need file reading capability
+var CommitMessage = require('../../KBB.Trident.Web/node_modules/kbb-local-hooks/prepare-commit-msg.js');
+
+console.log('PREPARE COMMIT MSG HOOK');
+
+
+console.log('PREPARE COMMIT MSG HOOK END');
+
+process.exit(0);
