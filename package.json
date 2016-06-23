@@ -1,17 +1,24 @@
 {
   "name": "kbb-local-hooks",
-  "version": "0.0.15",
+  "version": "0.0.13",
   "description": "Kbb Local Git Hooks",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository" :
-    { "type" : "git"
-    , "url" : "https://github.com/rtamkbb/KbbLocalGitHooks"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rtamkbb/KbbLocalGitHooks.git"
   },
   "author": "",
   "license": "ISC",
-  "_id": "kbb-local-hooks@0.0.1",
-  "_shasum": "1e360eb036399559f4f60b35519d5b40ba5df7d1",
-  "_from": "kbb-local-hooks@latest"
+  "_id": "kbb-local-hooks@0.0.13",
+  "_shasum": "54ab304f36c018c2830a7b84970696083f8be6d3",
+  "_from": "kbb-local-hooks@*",
+  "readme": "# KbbLocalGitHooks\n\nThis is a JS PoC for local hooks that will be used with the Kbb Git Repo.\n",
+  "readmeFilename": "README.md",
+  "gitHead": "ba1c8cbb01af934972ccf3762732aa29169f23b4",
+  "bugs": {
+    "url": "https://github.com/rtamkbb/KbbLocalGitHooks/issues"
+  },
+  "homepage": "https://github.com/rtamkbb/KbbLocalGitHooks#readme"
 }

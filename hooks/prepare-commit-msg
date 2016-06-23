@@ -4,30 +4,16 @@ var fs = require('fs'); // need file reading capability
 var childProcess = require('child_process'); // for running cmd line
 var PrepareCommitMessage = require('../../KBB.Trident.Web/node_modules/kbb-local-hooks/prepare-commit-msg.js');
 
-console.log('PREPARE COMMIT MSG HOOK');
-
-var mergeFile = process.argv[2]; // merge commit message is stored in a file, usually ".git/MERGE_MSG"
+var mergeCommitFile = process.argv[2]; // merge commit message is stored in a file, usually ".git/MERGE_MSG"
 var source = process.argv[3]; // commit message source (message, template, merge, squash, commit)
 var statusCode = 1;
 var mergeFromBranchName = '';
 var currentBranchName = '';
 
-// if merge, then get the current branch name and the merge from branch name
-if(source === 'merge'){
-	// get the merge from branch name
-	try {
-		var stats = fs.statSync(mergeFile);
-		var mergeFrom = fs.readFileSync(mergeFile, { encoding: 'utf8' }); // read the file for the merge info
+console.log('prepare-commit-msg hook start');
 
-		// parse out the merge from branch name
-		// merge from branch name is stored in the merge file in this convention "Merge branch '[branchName]'"
-		mergeFromBranchName = merge.substring(merge.indexOf('\'') + 1, merge.lastIndexOf('\''));
-		console.log('mergeFromBranchName: ' + mergeFromBranchName);	
-	}
-	catch (e) {
-		console.log('ERROR: merge file not found');
-	}
-	
+// if merge, then get the current branch name and the merge from branch name
+if(source === 'merge') {	
 	// get the current branch name
 	var spawn = childProcess.spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
 	var errorText = spawn.stderr.toString().trim();
@@ -36,14 +22,31 @@ if(source === 'merge'){
 	}
 	else {
 		currentBranchName = spawn.stdout.toString().trim();
-		console.log('currentBranchName: ' + currentBranchName;
 	}
 	
-	if(mergeFromBranchName !== '' && currentBranchName !== '') {
-		statusCode = PrepareCommitMessage.validate(currentBranchName, mergeFromBranchName);
+	// get the source branch name
+	// I could only find out how to get the source head from the environment variables.  It's stored in the GITHEAD_<sha> variable
+	// Usually it can be found in the .git/MERGE_HEAD file, but that file is not availalble at this point.
+	for(var prop in process.env) {
+		if(prop.startsWith('GITHEAD_')) {
+			mergeFromBranchName = process.env[prop];
+			break;
+		}
 	}
+	
+	// get the merge commit message
+	var mergeCommitMessage = fs.readFileSync(mergeCommitFile); // read the file for the commit message
+	if(!mergeCommitMessage) {
+		console.log('ERROR: Could not read merge commit message file');
+	}
+	
+	if(mergeFromBranchName !== '' && currentBranchName !== '' && mergeCommitMessage !== '') {
+		statusCode = PrepareCommitMessage.validate(currentBranchName, mergeFromBranchName, mergeCommitMessage);
+	}	
+} else {
+	statusCode = 0;
 }
-console.log('source: ' + source);
 
+console.log('prepare-commit-msg hook end: ' + statusCode);
 
 process.exit(statusCode);

@@ -10,6 +10,8 @@ var statusCode = 1;
 var branchName = '';
 var commitMsg = '';
 
+console.log('commit-msg hook start');
+
 // Get the current branch name
 // git rev-parse --abbrev-ref HEAD
 var spawn = childProcess.spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
@@ -33,5 +35,7 @@ else {
 		statusCode = CommitMessage.validate(commitMsg, branchName);
 	}
 }
+
+console.log('commit-msg hook end: ' + statusCode);
 
 process.exit(statusCode);
