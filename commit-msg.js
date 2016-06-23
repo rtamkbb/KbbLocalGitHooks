@@ -1,20 +1,22 @@
+var RegEx = require('./regex.js');
+
 var validateText = function (msg) {
-    var commitMessageRegexPattern = new RegExp('(Story: B-|BugId: |Epic: E-)[0-9]* \| .*$');
+    var commitMessageRegexPattern = new RegExp(RegEx.commitMessage());
     var match = commitMessageRegexPattern.test(msg);
     var statusCode = 1;
     if (match) {
-        console.log('PASS: Naming convention validation');
         statusCode = 0;
     }
     else {
-        console.log('ERROR: Naming convention validation');
+        console.log('ERROR: Commit comment is not valid');
     }
     return statusCode;
 }
 
 var validateBranch = function (branchName) {
     var blockedBranches = ['master', 'staging', 'develop'];
-    if(blockedBranches.contains(branchName)) {
+    if(blockedBranches.indexOf(branchName) > -1) {
+		console.log('ERROR: Should not be committing to: master, staging, or develop');
 		return 1;
 	}
 	else {
@@ -25,9 +27,11 @@ var validateBranch = function (branchName) {
 module.exports = {
     validate: function (commitMsg, branchName) {
         var statusCode = 1;
+        console.log('commit-msg js start');
         if (validateText(commitMsg) === 0 && validateBranch(branchName) === 0) {
             statusCode = 0;
         }
+        console.log('commit-msg js end: ' + statusCode);
         return statusCode;
     }
 };

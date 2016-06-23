@@ -1,6 +1,6 @@
 {
   "name": "kbb-local-hooks",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "Kbb Local Git Hooks",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
