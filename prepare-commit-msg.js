@@ -24,6 +24,10 @@ var validatePullRequestLabels = function(currentBranchName, mergeFromBranchName)
 	else if(currentBranchName === 'develop' && mergeFromBranchName === 'staging') {
 		statusCode = 0;
 	}
+	// allow merges going into feature branches
+	else if(currentBranchName !== 'develop' && currentBranchName != 'staging' && currentBranchName != 'master') {
+		statusCode = 0;
+	}
 	else {
 		console.log('check for the backend approved label and frontend approved label');
 		// check for the 'backend approved' label and 'frontend approved' label
@@ -53,7 +57,6 @@ var checkLabel = function(mergeFromBranchName, label) {
 	var url = checkLabelApiUrl;
 	url = url.replace('{0}', mergeFromBranchName);
 	url = url.replace('{1}', label);
-	console.log('checkLabel: ' + label);
 
 	var res;
 	try {
